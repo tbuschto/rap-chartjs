@@ -17,7 +17,7 @@ public class ChartDemo extends AbstractEntryPoint {
     chart.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
     chart.setChartType( "Line" );
     JsonObject data = new JsonObject()
-      .add( "labels", asJson( "January","February","March","April","May","June","July" ) )
+      .add( "labels", asJson( "January","February","March","April","May","June","July", "August" ) )
       .add( "datasets", asJson(
         new JsonObject()
           .add( "fillColor", "rgba(220,220,220,0.5)" )
@@ -34,7 +34,6 @@ public class ChartDemo extends AbstractEntryPoint {
       )
     );
     chart.setChartData( data );
-    chart.setChartOptions( new JsonObject() );
   }
 
   private JsonArray asJson( String... strings ) {

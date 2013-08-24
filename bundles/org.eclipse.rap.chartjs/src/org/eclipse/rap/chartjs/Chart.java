@@ -27,6 +27,8 @@ public class Chart extends Canvas {
     requireJS();
     WidgetUtil.registerDataKeys( CHART_TYPE, CHART_DATA, CHART_OPTIONS );
     addPaintListener();
+    setData( CHART_OPTIONS, new JsonObject() );
+    applyFixes();
   }
 
   public void setChartType( String type ) {
@@ -39,22 +41,27 @@ public class Chart extends Canvas {
     redraw();
   }
 
-  public void setChartOptions( JsonObject data ) {
-    setData( CHART_OPTIONS, data );
-    redraw();
-  }
-
   private void addPaintListener() {
     ClientListener listener = new ClientListener(
         "function handleEvent( event ) {\n"
-      + "  var gc = event.gc;\n"
       + "  var type = event.widget.getData( \"" +  CHART_TYPE + "\" );\n"
       + "  var data = event.widget.getData( \"" +  CHART_DATA + "\" );\n"
       + "  var options = event.widget.getData( \"" +  CHART_OPTIONS + "\" );\n"
-      + "  new Chart( gc )[ type ]( data, options );"
+      + "  new Chart( event.gc )[ type ]( data, options );\n"
+      + "  options.animation = false;"
       + "}\n"
     );
     addListener( SWT.Paint, listener );
+  }
+
+  private void applyFixes() {
+    // See RAP Bug 391414
+    ClientListener listener = new ClientListener(
+        "function handleEvent( event ) {\n"
+      + "  event.widget.redraw();"
+      + "}\n"
+    );
+    addListener( SWT.Show, listener );
   }
 
   private void requireJS() {
