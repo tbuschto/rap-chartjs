@@ -22,7 +22,11 @@ public class Chart extends Canvas {
   private static final String CHART_MIN_JS = "Chart.min.js";
 
   private static final String LINE_CHART = "Line";
-  private static final Object PIE_CHART = "Pie";
+  private static final String PIE_CHART = "Pie";
+  private static final String BAR_CHART = "Bar";
+  private static final String RADAR_CHART = "Radar";
+  private static final String POLAR_AREA_CHART = "PolarArea";
+  private static final String DOUGHNUT_CHART = "Doughnut";
 
   public Chart( Composite parent, int style ) {
     super( parent, style );
@@ -34,14 +38,38 @@ public class Chart extends Canvas {
     applyFixes();
   }
 
-  public void drawLineChart( DataRows data ) {
+  public void drawLineChart( ChartRowData data ) {
     setData( CHART_TYPE, LINE_CHART );
     setData( CHART_DATA, data.toJson() );
     redraw();
   }
 
-  public void drawPieChart( DataPoint data ) {
+  public void drawBarChart( ChartRowData data ) {
+    setData( CHART_TYPE, BAR_CHART );
+    setData( CHART_DATA, data.toJson() );
+    redraw();
+  }
+
+  public void drawRadarChart( ChartRowData data ) {
+    setData( CHART_TYPE, RADAR_CHART );
+    setData( CHART_DATA, data.toJson() );
+    redraw();
+  }
+
+  public void drawPolarAreaChart( ChartPointData data ) {
+    setData( CHART_TYPE, POLAR_AREA_CHART );
+    setData( CHART_DATA, data.toJson() );
+    redraw();
+  }
+
+  public void drawPieChart( ChartPointData data ) {
     setData( CHART_TYPE, PIE_CHART );
+    setData( CHART_DATA, data.toJson() );
+    redraw();
+  }
+
+  public void drawDoughnutChart( ChartPointData data ) {
+    setData( CHART_TYPE, DOUGHNUT_CHART );
     setData( CHART_DATA, data.toJson() );
     redraw();
   }

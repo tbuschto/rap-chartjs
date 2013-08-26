@@ -58,4 +58,8 @@ public class ChartStyle {
     return pointStrokeColor;
   }
 
+  static String asCss( RGB rgb ) {
+    return "rgb( " + rgb.red + ", " + rgb.green + ", " + rgb.blue + ")";
+  }
+
 }
