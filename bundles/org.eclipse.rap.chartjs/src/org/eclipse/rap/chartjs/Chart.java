@@ -21,6 +21,9 @@ public class Chart extends Canvas {
   private static final String CHART_TYPE = "chartType";
   private static final String CHART_MIN_JS = "Chart.min.js";
 
+  private static final String LINE_CHART = "Line";
+  private static final Object PIE_CHART = "Pie";
+
   public Chart( Composite parent, int style ) {
     super( parent, style );
     registerJS();
@@ -31,13 +34,15 @@ public class Chart extends Canvas {
     applyFixes();
   }
 
-  public void setChartType( String type ) {
-    setData( CHART_TYPE, type );
+  public void drawLineChart( DataRows data ) {
+    setData( CHART_TYPE, LINE_CHART );
+    setData( CHART_DATA, data.toJson() );
     redraw();
   }
 
-  public void setChartData( JsonObject data ) {
-    setData( CHART_DATA, data );
+  public void drawPieChart( DataPoint data ) {
+    setData( CHART_TYPE, PIE_CHART );
+    setData( CHART_DATA, data.toJson() );
     redraw();
   }
 

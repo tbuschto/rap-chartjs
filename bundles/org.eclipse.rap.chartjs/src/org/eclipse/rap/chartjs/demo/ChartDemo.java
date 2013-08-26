@@ -1,8 +1,8 @@
 package org.eclipse.rap.chartjs.demo;
 
 import org.eclipse.rap.chartjs.Chart;
-import org.eclipse.rap.json.JsonArray;
-import org.eclipse.rap.json.JsonObject;
+import org.eclipse.rap.chartjs.ChartStyle;
+import org.eclipse.rap.chartjs.DataRows;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -15,49 +15,11 @@ public class ChartDemo extends AbstractEntryPoint {
   protected void createContents( Composite parent ) {
     Chart chart = new Chart( parent, SWT.NONE );
     chart.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
-    chart.setChartType( "Line" );
-    JsonObject data = new JsonObject()
-      .add( "labels", asJson( "January","February","March","April","May","June","July", "August" ) )
-      .add( "datasets", asJson(
-        new JsonObject()
-          .add( "fillColor", "rgba(220,220,220,0.5)" )
-          .add( "strokeColor", "rgba(220,220,220,1)" )
-          .add( "pointColor", "rgba(220,220,220,1)" )
-          .add( "pointStrokeColor", "#fff" )
-          .add( "data", asJson( 65, 59, 90, 81, 56, 55, 40 ) ),
-        new JsonObject()
-          .add( "fillColor", "rgba(151,187,205,0.5)" )
-          .add( "strokeColor", "rgba(151,187,205,1)" )
-          .add( "pointColor", "rgba(151,187,205,1)" )
-          .add( "pointStrokeColor", "#fff" )
-          .add( "data", asJson( 28, 48, 40, 19, 96, 27, 100 ) )
-      )
-    );
-    chart.setChartData( data );
+    DataRows data = new DataRows( new String[] { "January","February","March","April","May","June","July", "August" } );
+    data.addRow( new int[] { 28, 48, 40, 19, 96, 27, 100 }, new ChartStyle( 220, 220, 220 ) );
+    data.addRow( new int[] { 100, 28, 48, 40, 19, 96, 27 }, new ChartStyle( 151, 187, 205 ) );
+    chart.drawLineChart( data );
   }
 
-  private JsonArray asJson( String... strings ) {
-    JsonArray result = new JsonArray();
-    for( int i = 0; i < strings.length; i++ ) {
-      result.add( strings[ i ] );
-    }
-    return result;
-  }
-
-  private JsonArray asJson( JsonObject... jsonObject ) {
-    JsonArray result = new JsonArray();
-    for( int i = 0; i < jsonObject.length; i++ ) {
-      result.add( jsonObject[ i ] );
-    }
-    return result;
-  }
-
-  private JsonArray asJson( int... ints ) {
-    JsonArray result = new JsonArray();
-    for( int i = 0; i < ints.length; i++ ) {
-      result.add( ints[ i ] );
-    }
-    return result;
-  }
 
 }
