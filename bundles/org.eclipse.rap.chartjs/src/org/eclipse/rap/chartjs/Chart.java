@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 
+@SuppressWarnings("deprecation")
 public class Chart extends Canvas {
 
   private static final String CHART_OPTIONS = "chartOptions";
@@ -45,51 +46,110 @@ public class Chart extends Canvas {
     registerJS();
     requireJS();
     // NOTE: RAP re-transfers all attached widget data, even if only one of them changes.
-    //       That is used by the ChartPaintListener to prevent chart appear animations on resize.
+    //       That is useful for the ChartPaintListener to prevent chart appear animations on resize.
     //       Bi-directional synchronization of the data would also work.
     WidgetUtil.registerDataKeys( CHART_TYPE, CHART_DATA, CHART_OPTIONS );
     addPaintListener();
-    setData( CHART_OPTIONS, new JsonObject() );
     applyFixes();
   }
 
   public void drawLineChart( ChartRowData data ) {
+    drawLineChart( data, null );
+  }
+
+  public void drawLineChart( ChartRowData data, ChartOptions options ) {
     setData( CHART_TYPE, LINE_CHART );
     setData( CHART_DATA, data.toJson() );
+    setData( CHART_OPTIONS, getLineChartOptions( options ) );
     redraw();
   }
 
   public void drawBarChart( ChartRowData data ) {
+    drawBarChart( data, null );
+  }
+
+  public void drawBarChart( ChartRowData data, ChartOptions options ) {
     setData( CHART_TYPE, BAR_CHART );
     setData( CHART_DATA, data.toJson() );
+    setData( CHART_OPTIONS, getBarChartOptions( options ) );
     redraw();
   }
 
   public void drawRadarChart( ChartRowData data ) {
+    drawRadarChart( data, null );
+  }
+
+  public void drawRadarChart( ChartRowData data, ChartOptions options ) {
     setData( CHART_TYPE, RADAR_CHART );
     setData( CHART_DATA, data.toJson() );
+    setData( CHART_OPTIONS, getLineChartOptions( options ) );
     redraw();
   }
 
   public void drawPolarAreaChart( ChartPointData data ) {
+    drawPolarAreaChart( data, null );
+  }
+
+  public void drawPolarAreaChart( ChartPointData data, ChartOptions options ) {
     setData( CHART_TYPE, POLAR_AREA_CHART );
     setData( CHART_DATA, data.toJson() );
+    setData( CHART_OPTIONS, getSegmentChartOptions( options ) );
     redraw();
   }
 
   public void drawPieChart( ChartPointData data ) {
+    drawPieChart( data, null );
+  }
+
+  public void drawPieChart( ChartPointData data, ChartOptions options ) {
     setData( CHART_TYPE, PIE_CHART );
     setData( CHART_DATA, data.toJson() );
+    setData( CHART_OPTIONS, getSegmentChartOptions( options ) );
     redraw();
   }
 
-  public void drawDoughnutChart( ChartPointData data ) { // , ChartOptions...
+  public void drawDoughnutChart( ChartPointData data ) {
+    drawDoughnutChart( data, null );
+  }
+
+  public void drawDoughnutChart( ChartPointData data, ChartOptions options ) {
     setData( CHART_TYPE, DOUGHNUT_CHART );
     setData( CHART_DATA, data.toJson() );
+    setData( CHART_OPTIONS, getSegmentChartOptions( options ) );
     redraw();
   }
 
   // updatePoint/updateRow
+
+  private Object getSegmentChartOptions( ChartOptions options ) {
+    if( options == null ) {
+      return new JsonObject();
+    }
+    JsonObject json = options.toJson();
+    json.set( "segmentShowStroke", json.get( "showStroke" ).asBoolean() );
+    json.set( "segmentStrokeWidth", json.get( "strokeWidth" ).asInt() );
+    return json;
+  }
+
+  private Object getBarChartOptions( ChartOptions options ) {
+    if( options == null ) {
+      return new JsonObject();
+    }
+    JsonObject json = options.toJson();
+    json.set( "barShowStroke", json.get( "showStroke" ).asBoolean() );
+    json.set( "barStrokeWidth", json.get( "strokeWidth" ).asInt() );
+    return json;
+  }
+
+  private Object getLineChartOptions( ChartOptions options ) {
+    if( options == null ) {
+      return new JsonObject();
+    }
+    JsonObject json = options.toJson();
+    json.set( "datasetStroke", json.get( "showStroke" ).asBoolean() );
+    json.set( "datasetStrokeWidth", json.get( "strokeWidth" ).asInt() );
+    return json;
+  }
 
   private void addPaintListener() {
     addListener( SWT.Paint, ChartPaintListener.getInstance() );

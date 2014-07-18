@@ -12,98 +12,228 @@
 package org.eclipse.rap.chartjs.demo;
 
 import org.eclipse.rap.chartjs.Chart;
+import org.eclipse.rap.chartjs.ChartOptions;
 import org.eclipse.rap.chartjs.ChartPointData;
 import org.eclipse.rap.chartjs.ChartRowData;
 import org.eclipse.rap.chartjs.ChartStyle;
 import org.eclipse.rap.rwt.application.AbstractEntryPoint;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 
 
 public class ChartDemo extends AbstractEntryPoint {
 
-  private static final String HAS_ALT_DATA = "hasAltData";
-  private static final String IS_ROW_DATA_CHART = "isRowDataChart";
-  private ChartRowData rowData1;
-  private ChartRowData rowData2;
+  private static final String[] MONTHS = new String[] { "January", "February", "March", "April", "May", "June", "July" };
+  private final ChartOptions options = new ChartOptions();;
   private ChartStyle chartStyle1;
   private ChartStyle chartStyle2;
   private ChartStyle chartStyle3;
   private ChartStyle chartStyle4;
   private ChartStyle chartStyle5;
-  private ChartPointData pointData1;
-  private ChartPointData pointData2;
+  private int update = 1;
+  private final Chart[] charts = new Chart[ 6 ];
 
   @Override
   protected void createContents( Composite parent ) {
     parent.setLayout( new GridLayout( 3, true ) );
     createChartStyles();
-    createRowData();
-    createPointData();
-    createChart( parent, true ).drawLineChart( rowData1 );
-    createChart( parent, true ).drawBarChart( rowData1 );
-    createChart( parent, true ).drawRadarChart( rowData1 );
-    createChart( parent, false ).drawPolarAreaChart( pointData1 );
-    createChart( parent, false ).drawPieChart( pointData1 );
-    createChart( parent, false ).drawDoughnutChart( pointData1 );
+    for( int i = 0; i < charts.length; i++ ) {
+      createChart( parent, i );
+    }
+    createControls( parent );
   }
 
-  private void createPointData() {
-    pointData1 = new ChartPointData().addPoint( 28, chartStyle3 )
-                                     .addPoint( 88, chartStyle4 )
-                                     .addPoint( 51, chartStyle5 );
-    pointData2 = new ChartPointData().addPoint( 48, chartStyle3 )
-                                     .addPoint( 50, chartStyle4 )
-                                     .addPoint( 39, chartStyle5 );
+  private ChartPointData createPointData() {
+    return new ChartPointData().addPoint( nr(), chartStyle3 )
+                               .addPoint( nr(), chartStyle4 )
+                               .addPoint( nr(), chartStyle5 )
+                               .addPoint( nr(), chartStyle1 )
+                               .addPoint( nr(), chartStyle2 );
   }
 
-  private void createRowData() {
-    rowData1 = new ChartRowData( new String[] { "January", "February", "March", "April", "May", "June", "July" } );
-    rowData1.addRow( new int[] { 28, 48, 40, 19, 96, 27, 100 }, chartStyle1 )
-            .addRow( new int[] { 27, 100, 28, 48, 40, 19, 96 }, chartStyle2 );
-    rowData2 = new ChartRowData( new String[] { "January", "February", "March", "April", "May", "June", "July" } );
-    rowData2.addRow( new int[] { 18, 30, 43, 19, 65, 20, 10 }, chartStyle1 )
-            .addRow( new int[] { 20, 90, 18, 38, 30, 59, 80 }, chartStyle2 );
+  private ChartRowData createRowData() {
+    return new ChartRowData( MONTHS ).addRow( new int[] { nr(), nr(), nr(), nr(), nr(), nr(), nr() }, chartStyle1 )
+                                     .addRow( new int[] { nr(), nr(), nr(), nr(), nr(), nr(), nr() }, chartStyle2 );
   }
 
   private void createChartStyles() {
     chartStyle1 = new ChartStyle( 220, 220, 220, 0.8f );
+    chartStyle1.setPointColor( new RGB( 100, 220, 100 ) );
     chartStyle2 = new ChartStyle( 151, 187, 205, 0.7f );
     chartStyle3 = new ChartStyle( 250, 187, 105, 0.9f );
     chartStyle4 = new ChartStyle( 50, 187, 205, 0.9f );
+    chartStyle4.setStrokeColor( new RGB( 0, 0, 0 ) );
     chartStyle5 = new ChartStyle( 10, 17, 133, 0.9f );
   }
 
-  private Chart createChart( Composite parent, boolean isRowDataChart ) {
+  private void createChart( Composite parent, int no ) {
     Chart chart = new Chart( parent, SWT.NONE );
     chart.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
-    chart.setData( IS_ROW_DATA_CHART, new Boolean( isRowDataChart ) );
-    chart.setData( HAS_ALT_DATA, Boolean.FALSE );
-    chart.addListener( SWT.MouseDown, new ChangeDataListener() );
-    return chart;
+    charts[ no ] = chart;
+    renderChart( no );
   }
 
-  private final class ChangeDataListener implements Listener {
+  private void renderChart( int no ) {
+    switch( no ) {
+      case 0:
+        charts[ no ].drawBarChart( createRowData(), options );
+      break;
+      case 1:
+        charts[ no ].drawLineChart( createRowData(), options );
+      break;
+      case 2:
+        charts[ no ].drawRadarChart( createRowData(), options );
+      break;
+      case 3:
+        charts[ no ].drawPolarAreaChart( createPointData(), options );
+      break;
+      case 4:
+        charts[ no ].drawPieChart( createPointData(), options );
+      break;
+      case 5:
+        charts[ no ].drawDoughnutChart( createPointData(), options );
+      break;
+    }
+  }
 
-    @Override
-    public void handleEvent( Event event ) {
-      Chart chart = ( Chart )event.widget;
-      boolean hasAltData = ( ( Boolean )chart.getData( HAS_ALT_DATA ) ).booleanValue();
-      boolean isRowDataChart = ( ( Boolean )chart.getData( IS_ROW_DATA_CHART ) ).booleanValue();
-      if( ( event.stateMask & SWT.CTRL ) != 0 ) {
-        if( isRowDataChart ) {
-          chart.drawBarChart( hasAltData ? rowData1 : rowData2 );
-        } else {
-          chart.drawPieChart( hasAltData ? pointData1 : pointData2 );
+  private void createControls( final Composite parent ) {
+    Composite composite = new Composite( parent, SWT.NONE );
+    GridData layoutData = new GridData();
+    layoutData.grabExcessHorizontalSpace = true;
+    layoutData.horizontalSpan = 3;
+    composite.setLayoutData( layoutData );
+    RowLayout layout = new RowLayout();
+    layout.center = true;
+    composite.setLayout( layout );
+    createOption( composite, "Animation", options.getAnimation(), new BooleanSetter() {
+      @Override
+      public void setOption( boolean value ) {
+        options.setAnimation( value );
+      }
+    } );
+    createOption( composite, "ShowToolTips", options.getShowToolTips(), new BooleanSetter() {
+      @Override
+      public void setOption( boolean value ) {
+        options.setShowToolTips( value );
+      }
+    } );
+    createOption( composite, "ScaleBeginAtZero", options.getScaleBeginAtZero(), new BooleanSetter() {
+      @Override
+      public void setOption( boolean value ) {
+        options.setScaleBeginAtZero( value );
+      }
+    } );
+    createOption( composite, "BezierCurve", options.getBezierCurve(), new BooleanSetter() {
+      @Override
+      public void setOption( boolean value ) {
+        options.setBezierCurve( value );
+      }
+    } );
+    createOption( composite, "ShowFill", options.getShowFill(), new BooleanSetter() {
+      @Override
+      public void setOption( boolean value ) {
+        options.setShowFill( value );
+      }
+    } );
+    createOption( composite, "ScaleShowLabels", options.getScaleShowLabels(), new BooleanSetter() {
+      @Override
+      public void setOption( boolean value ) {
+        options.setScaleShowLabels( value );
+      }
+    } );
+    createOption( composite, "PointDotRadius", options.getPointDotRadius(), new IntSetter() {
+      @Override
+      public void setOption( int value ) {
+        options.setPointDotRadius( value );
+      }
+    } );
+    createOption( composite, "StrokeWidth", options.getStrokeWidth(), new IntSetter() {
+      @Override
+      public void setOption( int value ) {
+        options.setStrokeWidth( value );
+      }
+    } );
+    createOption( composite, " | Chart No.", update, new IntSetter() {
+      @Override
+      public void setOption( int value ) {
+        update = value;
+      }
+    } );
+    Button button = new Button( composite, SWT.PUSH );
+    button.setText( "Draw!" );
+    button.addListener( SWT.Selection, new Listener() {
+      @Override
+      public void handleEvent( Event event ) {
+        renderChart( update - 1 );
+      }
+    } );
+    Button button2 = new Button( composite, SWT.PUSH );
+    button2.setText( "Update!" );
+    button2.addListener( SWT.Selection, new Listener() {
+      @Override
+      public void handleEvent( Event event ) {
+        //renderChart( update );
+      }
+    } );
+  }
 
+  private void createOption( Composite parent,
+                             String name,
+                             boolean initial,
+                             final BooleanSetter booleanSetter )
+  {
+    final Button button = new Button( parent, SWT.CHECK );
+    button.setText( name + "   ");
+    button.setSelection( initial );
+    button.addListener( SWT.Selection, new Listener() {
+      @Override
+      public void handleEvent( Event event ) {
+        booleanSetter.setOption( button.getSelection() );
+      }
+    } );
+  }
+
+  private void createOption( Composite parent,
+                             String name,
+                             int initial,
+                             final IntSetter intSetter )
+  {
+    final Label label = new Label( parent, SWT.NONE );
+    label.setText( "   " + name + ":" );
+    final Text text = new Text( parent, SWT.BORDER );
+    text.setText( String.valueOf( initial ) );
+    text.addListener( SWT.Modify, new Listener() {
+      @Override
+      public void handleEvent( Event event ) {
+        try {
+          intSetter.setOption( Integer.parseInt( text.getText() ) );
+        } catch( NumberFormatException ex ) {
         }
       }
-      chart.setData( HAS_ALT_DATA, new Boolean( !hasAltData ) );
-    }
+    } );
+  }
+
+  private abstract class BooleanSetter {
+    abstract void setOption( boolean value );
+  }
+
+  private abstract class IntSetter {
+    abstract void setOption( int value );
+  }
+
+  private int nr() {
+    int factor = options.getScaleBeginAtZero() ? 100 : 1000;
+    int offset = Math.round( factor * 0.1f );
+    return offset + ( int )( Math.random() * ( factor - offset ) );
   }
 
 }

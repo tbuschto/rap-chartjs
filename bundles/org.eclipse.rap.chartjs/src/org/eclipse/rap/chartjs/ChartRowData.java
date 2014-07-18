@@ -54,7 +54,6 @@ public class ChartRowData {
     return result;
   }
 
-
   private JsonArray asJson( String... strings ) {
     JsonArray result = new JsonArray();
     for( int i = 0; i < strings.length; i++ ) {
