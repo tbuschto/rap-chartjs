@@ -23,9 +23,10 @@ public class ChartPointData {
   private final List<Integer> points = new ArrayList<Integer>( 5 );
   private final List<ChartStyle> colors = new ArrayList<ChartStyle>( 5 );
 
-  public void addPoint( int value, ChartStyle chartStyle ) {
+  public ChartPointData addPoint( int value, ChartStyle chartStyle ) {
     points.add( value );
     colors.add( chartStyle );
+    return this;
   }
 
   JsonArray toJson() {

@@ -30,9 +30,10 @@ public class ChartRowData {
     this.labels = labels;
   }
 
-  public void addRow( int[] row, ChartStyle colors ) {
+  public ChartRowData addRow( int[] row, ChartStyle colors ) {
     rows.add( row );
     this.colors.add( colors );
+    return this;
   }
 
   JsonObject toJson() {

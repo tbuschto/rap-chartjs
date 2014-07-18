@@ -38,40 +38,45 @@ public class ChartStyle {
     setFillOpacity( fillOpacity );
   }
 
-  public void setFillColor( RGB fillColor ) {
+  public ChartStyle setFillColor( RGB fillColor ) {
     this.fillColor = fillColor;
+    return this;
   }
 
   public RGB getFillColor() {
     return fillColor;
   }
 
-  public void setFillOpacity( float fillOpacity ) {
+  public ChartStyle setFillOpacity( float fillOpacity ) {
     this.fillOpacity = fillOpacity;
+    return this;
   }
 
   public float getFillOpacity() {
     return this.fillOpacity;
   }
 
-  public void setStrokeColor( RGB strokeColor ) {
+  public ChartStyle setStrokeColor( RGB strokeColor ) {
     this.strokeColor = strokeColor;
+    return this;
   }
 
   public RGB getStrokeColor() {
     return strokeColor;
   }
 
-  public void setPointColor( RGB pointColor ) {
+  public ChartStyle setPointColor( RGB pointColor ) {
     this.pointColor = pointColor;
+    return this;
   }
 
   public RGB getPointColor() {
     return pointColor;
   }
 
-  public void setPointStrokeColor( RGB pointStrokeColor ) {
+  public ChartStyle setPointStrokeColor( RGB pointStrokeColor ) {
     this.pointStrokeColor = pointStrokeColor;
+    return this;
   }
 
   public RGB getPointStrokeColor() {

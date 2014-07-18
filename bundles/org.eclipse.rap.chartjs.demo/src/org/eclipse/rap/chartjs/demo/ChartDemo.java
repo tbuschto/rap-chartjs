@@ -53,23 +53,21 @@ public class ChartDemo extends AbstractEntryPoint {
   }
 
   private void createPointData() {
-    pointData1 = new ChartPointData();
-    pointData1.addPoint( 28, chartStyle3 );
-    pointData1.addPoint( 88, chartStyle4 );
-    pointData1.addPoint( 51, chartStyle5 );
-    pointData2 = new ChartPointData();
-    pointData2.addPoint( 48, chartStyle3 );
-    pointData2.addPoint( 50, chartStyle4 );
-    pointData2.addPoint( 39, chartStyle5 );
+    pointData1 = new ChartPointData().addPoint( 28, chartStyle3 )
+                                     .addPoint( 88, chartStyle4 )
+                                     .addPoint( 51, chartStyle5 );
+    pointData2 = new ChartPointData().addPoint( 48, chartStyle3 )
+                                     .addPoint( 50, chartStyle4 )
+                                     .addPoint( 39, chartStyle5 );
   }
 
   private void createRowData() {
-    rowData1 = new ChartRowData( new String[] { "January","February","March","April","May","June","July" } );
-    rowData1.addRow( new int[] { 28, 48, 40, 19, 96, 27, 100 }, chartStyle1 );
-    rowData1.addRow( new int[] { 27, 100, 28, 48, 40, 19, 96 }, chartStyle2 );
-    rowData2 = new ChartRowData( new String[] { "January","February","March","April","May","June","July" } );
-    rowData2.addRow( new int[] { 18, 30, 43, 19, 65, 20, 10 }, chartStyle1 );
-    rowData2.addRow( new int[] { 20, 90, 18, 38, 30, 59, 80 }, chartStyle2 );
+    rowData1 = new ChartRowData( new String[] { "January", "February", "March", "April", "May", "June", "July" } );
+    rowData1.addRow( new int[] { 28, 48, 40, 19, 96, 27, 100 }, chartStyle1 )
+            .addRow( new int[] { 27, 100, 28, 48, 40, 19, 96 }, chartStyle2 );
+    rowData2 = new ChartRowData( new String[] { "January", "February", "March", "April", "May", "June", "July" } );
+    rowData2.addRow( new int[] { 18, 30, 43, 19, 65, 20, 10 }, chartStyle1 )
+            .addRow( new int[] { 20, 90, 18, 38, 30, 59, 80 }, chartStyle2 );
   }
 
   private void createChartStyles() {
