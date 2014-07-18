@@ -3,6 +3,7 @@ package org.eclipse.rap.chartjs;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.rap.chartjs.internal.ChartPaintListener;
 import org.eclipse.rap.json.JsonObject;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.JavaScriptLoader;
@@ -68,37 +69,16 @@ public class Chart extends Canvas {
     redraw();
   }
 
-  public void drawDoughnutChart( ChartPointData data ) {
+  public void drawDoughnutChart( ChartPointData data ) { // , ChartOptions...
     setData( CHART_TYPE, DOUGHNUT_CHART );
     setData( CHART_DATA, data.toJson() );
     redraw();
   }
 
+  // updatePoint/updateRow
+
   private void addPaintListener() {
-    ClientListener listener = new ClientListener(
-        "function handleEvent( event ) {\n"
-      + "  var type = event.widget.getData( \"" +  CHART_TYPE + "\" );\n"
-      + "  var data = event.widget.getData( \"" +  CHART_DATA + "\" );\n"
-      + "  var options = event.widget.getData( \"" +  CHART_OPTIONS + "\" );\n"
-      // IE HACKS:
-      + "  if( !event.gc.canvas ) {\n"
-      + "    event.gc.canvas = {\n"
-      + "      width : 200,\n"
-      + "      height : 200\n"
-      + "    };\n"
-      + "    event.gc.measureText = function( txt ) {"
-      + "      var fontStyle = {};\n"
-      + "      rwt.html.Font.fromString( this.font ).renderStyle( fontStyle );\n"
-      + "      return rwt.widgets.util.FontSizeCalculation.computeTextDimensions( txt, fontStyle );\n"
-      + "    };\n"
-      + "    event.gc.fillText = function(){};\n"
-      + "  }\n"
-      // IE HACKS END
-      + "  new Chart( event.gc )[ type ]( data, options );\n"
-      + "  options.animation = false;"
-      + "}\n"
-    );
-    addListener( SWT.Paint, listener );
+    addListener( SWT.Paint, ChartPaintListener.getInstance() );
   }
 
   private void applyFixes() {
@@ -119,7 +99,7 @@ public class Chart extends Canvas {
   private void registerJS() {
     ResourceManager manager = RWT.getResourceManager();
     if( !manager.isRegistered( CHART_MIN_JS ) ) {
-      InputStream inputStream = getClass().getResourceAsStream( CHART_MIN_JS );
+      InputStream inputStream = ChartPaintListener.class.getResourceAsStream( CHART_MIN_JS );
       manager.register( CHART_MIN_JS, inputStream );
       try {
         inputStream.close();
