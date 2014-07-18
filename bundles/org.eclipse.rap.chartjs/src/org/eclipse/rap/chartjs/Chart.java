@@ -33,6 +33,9 @@ public class Chart extends Canvas {
     super( parent, style );
     registerJS();
     requireJS();
+    // NOTE: RAP re-transfers all attached widget data, even if only one of them changes.
+    //       That is used by the ChartPaintListener to prevent chart appear animations on resize.
+    //       Bi-directional synchronization of the data would also work.
     WidgetUtil.registerDataKeys( CHART_TYPE, CHART_DATA, CHART_OPTIONS );
     addPaintListener();
     setData( CHART_OPTIONS, new JsonObject() );

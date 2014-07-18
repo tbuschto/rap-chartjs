@@ -4,6 +4,7 @@ function handleEvent( event ) {
     var data = event.widget.getData( "chartData" );
     var options = event.widget.getData( "chartOptions" );
     new Chart( event.gc )[ type ]( data, options );
-    options.animation = false; // on later redraws we don't want to replay the appear animation
+    // on later redraws we don't want to replay the appear animation:
+    options.animation = false; // will be reset by server for new charts
   }
 }
