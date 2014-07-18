@@ -31,7 +31,7 @@ public class Chart extends Canvas {
   private static final String CHART_OPTIONS = "chartOptions";
   private static final String CHART_DATA = "chartData";
   private static final String CHART_TYPE = "chartType";
-  private static final String CHART_MIN_JS = "Chart.min.js";
+  private static final String CHART_MIN_JS = "Chart.js";
 
   private static final String LINE_CHART = "Line";
   private static final String PIE_CHART = "Pie";
