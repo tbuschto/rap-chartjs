@@ -1,5 +1,7 @@
 package org.eclipse.rap.chartjs;
 
+import static org.eclipse.rap.chartjs.ChartStyle.asCss;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +31,10 @@ public class ChartRowData {
     for( int i = 0; i < rows.size(); i++ ) {
       ChartStyle rowColors = colors.get( i );
       rowsJson.add( new JsonObject()
-        .add( "fillColor", ChartStyle.asCss( rowColors.getFillColor() ) )
-        .add( "strokeColor", ChartStyle.asCss( rowColors.getStrokeColor() ) )
-        .add( "pointColor", ChartStyle.asCss( rowColors.getPointColor() ) )
-        .add( "pointStrokeColor", ChartStyle.asCss( rowColors.getPointStrokeColor() ) )
+        .add( "fillColor", asCss( rowColors.getFillColor(), rowColors.getFillOpacity() ) )
+        .add( "strokeColor", asCss( rowColors.getStrokeColor() ) )
+        .add( "pointColor", asCss( rowColors.getPointColor() ) )
+        .add( "pointStrokeColor", asCss( rowColors.getPointStrokeColor() ) )
         .add( "data", asJson( rows.get( i ) ) )
       );
     }
