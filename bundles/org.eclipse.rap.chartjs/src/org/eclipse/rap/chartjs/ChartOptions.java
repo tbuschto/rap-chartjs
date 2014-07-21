@@ -24,6 +24,11 @@ public class ChartOptions {
   private int pointDotRadius = 3;
   private int strokeWidth = 2;
 
+  /**
+   * Sets whether to play an "appear" animation for a new chart drawing.
+   * @param animation
+   * @return
+   */
   public ChartOptions setAnimation( boolean animation ) {
     this.animation = animation;
     return this;
@@ -33,6 +38,12 @@ public class ChartOptions {
     return this.animation;
   }
 
+  /**
+   * Sets whether to show tooltips on data segments/points/bars.
+   *
+   * @param showToolTips
+   * @return
+   */
   public ChartOptions setShowToolTips( boolean showToolTips ) {
     this.showToolTips = showToolTips;
     return this;
@@ -46,6 +57,13 @@ public class ChartOptions {
     return scaleBeginAtZero;
   }
 
+  /**
+   * Sets whether the scale should start at zero, or an order of magnitude down from the lowest
+   * value
+   *
+   * @param scaleBeginAtZero
+   * @return
+   */
   public ChartOptions setScaleBeginAtZero( boolean scaleBeginAtZero ) {
     this.scaleBeginAtZero = scaleBeginAtZero;
     return this;
@@ -55,6 +73,12 @@ public class ChartOptions {
     return bezierCurve;
   }
 
+  /**
+   * Sets whether the line between points in a line chart is curved.
+   *
+   * @param bezierCurve
+   * @return
+   */
   public ChartOptions setBezierCurve( boolean bezierCurve ) {
     this.bezierCurve = bezierCurve;
     return this;
@@ -64,6 +88,12 @@ public class ChartOptions {
     return showFill;
   }
 
+  /**
+   * Sets whether the area below a line is filled in a line chart.
+   *
+   * @param showFill
+   * @return
+   */
   public ChartOptions setShowFill( boolean showFill ) {
     this.showFill = showFill;
     return this;
@@ -73,6 +103,12 @@ public class ChartOptions {
     return pointDotRadius;
   }
 
+  /**
+   * Sets the radius of a dot in a line or radar chart. Set to 0 to draw no dots.
+   *
+   * @param pointDotRadius
+   * @return
+   */
   public ChartOptions setPointDotRadius( int pointDotRadius ) {
     this.pointDotRadius = pointDotRadius;
     return this;
@@ -82,6 +118,12 @@ public class ChartOptions {
     return strokeWidth;
   }
 
+  /**
+   * Sets the width of the outline of a data segment.
+   *
+   * @param pointDotRadius
+   * @return
+   */
   public ChartOptions setStrokeWidth( int strokeWidth ) {
     this.strokeWidth = strokeWidth;
     return this;
@@ -91,6 +133,12 @@ public class ChartOptions {
     return scaleShowLabels;
   }
 
+  /**
+   * Sets whether or not to show labels on the scale of the chart.
+   *
+   * @param scaleShowLabels
+   * @return
+   */
   public ChartOptions setScaleShowLabels( boolean scaleShowLabels ) {
     this.scaleShowLabels = scaleShowLabels;
     return this;
