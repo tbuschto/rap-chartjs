@@ -16,6 +16,7 @@ import java.io.InputStream;
 
 import org.eclipse.rap.chartjs.internal.ChartPaintListener;
 import org.eclipse.rap.json.JsonObject;
+import org.eclipse.rap.json.JsonValue;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.JavaScriptLoader;
 import org.eclipse.rap.rwt.lifecycle.WidgetUtil;
@@ -45,9 +46,8 @@ public class Chart extends Canvas {
     super( parent, style );
     registerJS();
     requireJS();
-    // NOTE: RAP re-transfers all attached widget data, even if only one of them changes.
-    //       That is useful for the ChartPaintListener to prevent chart appear animations on resize.
-    //       Bi-directional synchronization of the data would also work.
+    // NOTE: RAP re-transfers all attached widget data, even if only one of them changes,
+    //       but JsonObject/JsonArray aren't deep-compared
     WidgetUtil.registerDataKeys( CHART_TYPE, CHART_DATA, CHART_OPTIONS );
     addPaintListener();
     applyFixes();
@@ -58,10 +58,7 @@ public class Chart extends Canvas {
   }
 
   public void drawLineChart( ChartRowData data, ChartOptions options ) {
-    setData( CHART_TYPE, LINE_CHART );
-    setData( CHART_DATA, data.toJson() );
-    setData( CHART_OPTIONS, getLineChartOptions( options ) );
-    redraw();
+    drawChart( LINE_CHART, getLineChartOptions( options ), data.toJson() );
   }
 
   public void drawBarChart( ChartRowData data ) {
@@ -69,10 +66,7 @@ public class Chart extends Canvas {
   }
 
   public void drawBarChart( ChartRowData data, ChartOptions options ) {
-    setData( CHART_TYPE, BAR_CHART );
-    setData( CHART_DATA, data.toJson() );
-    setData( CHART_OPTIONS, getBarChartOptions( options ) );
-    redraw();
+    drawChart( BAR_CHART, getBarChartOptions( options ), data.toJson() );
   }
 
   public void drawRadarChart( ChartRowData data ) {
@@ -80,10 +74,7 @@ public class Chart extends Canvas {
   }
 
   public void drawRadarChart( ChartRowData data, ChartOptions options ) {
-    setData( CHART_TYPE, RADAR_CHART );
-    setData( CHART_DATA, data.toJson() );
-    setData( CHART_OPTIONS, getLineChartOptions( options ) );
-    redraw();
+    drawChart( RADAR_CHART, getLineChartOptions( options ), data.toJson() );
   }
 
   public void drawPolarAreaChart( ChartPointData data ) {
@@ -91,10 +82,7 @@ public class Chart extends Canvas {
   }
 
   public void drawPolarAreaChart( ChartPointData data, ChartOptions options ) {
-    setData( CHART_TYPE, POLAR_AREA_CHART );
-    setData( CHART_DATA, data.toJson() );
-    setData( CHART_OPTIONS, getSegmentChartOptions( options ) );
-    redraw();
+    drawChart( POLAR_AREA_CHART, getSegmentChartOptions( options ), data.toJson() );
   }
 
   public void drawPieChart( ChartPointData data ) {
@@ -102,10 +90,7 @@ public class Chart extends Canvas {
   }
 
   public void drawPieChart( ChartPointData data, ChartOptions options ) {
-    setData( CHART_TYPE, PIE_CHART );
-    setData( CHART_DATA, data.toJson() );
-    setData( CHART_OPTIONS, getSegmentChartOptions( options ) );
-    redraw();
+    drawChart( PIE_CHART, getSegmentChartOptions( options ), data.toJson() );
   }
 
   public void drawDoughnutChart( ChartPointData data ) {
@@ -113,15 +98,22 @@ public class Chart extends Canvas {
   }
 
   public void drawDoughnutChart( ChartPointData data, ChartOptions options ) {
-    setData( CHART_TYPE, DOUGHNUT_CHART );
-    setData( CHART_DATA, data.toJson() );
-    setData( CHART_OPTIONS, getSegmentChartOptions( options ) );
+    drawChart( DOUGHNUT_CHART, getSegmentChartOptions( options ), data.toJson() );
+  }
+
+  public void clear() {
+    setData( CHART_TYPE, JsonObject.NULL ); // "null" won't be synchronized
     redraw();
   }
 
-  // updatePoint/updateRow
+  private void drawChart( String type, JsonObject options, JsonValue data ) {
+    setData( CHART_TYPE, type );
+    setData( CHART_OPTIONS, options  );
+    setData( CHART_DATA, data );
+    redraw();
+  }
 
-  private Object getSegmentChartOptions( ChartOptions options ) {
+  private JsonObject getSegmentChartOptions( ChartOptions options ) {
     if( options == null ) {
       return new JsonObject();
     }
@@ -131,7 +123,7 @@ public class Chart extends Canvas {
     return json;
   }
 
-  private Object getBarChartOptions( ChartOptions options ) {
+  private JsonObject getBarChartOptions( ChartOptions options ) {
     if( options == null ) {
       return new JsonObject();
     }
@@ -141,7 +133,7 @@ public class Chart extends Canvas {
     return json;
   }
 
-  private Object getLineChartOptions( ChartOptions options ) {
+  private JsonObject getLineChartOptions( ChartOptions options ) {
     if( options == null ) {
       return new JsonObject();
     }

@@ -107,8 +107,9 @@ public class ChartOptions {
     result.add( "pointDotRadius", pointDotRadius );
     result.add( "showStroke", strokeWidth > 0 ? true : false );
     result.add( "strokeWidth", strokeWidth );
-    result.add( "scaleShowLabels", getScaleShowLabels() );
+    result.add( "scaleShowLabels", scaleShowLabels );
     return result;
   }
 
 }
+

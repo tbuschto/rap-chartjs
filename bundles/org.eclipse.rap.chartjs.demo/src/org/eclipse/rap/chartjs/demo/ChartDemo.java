@@ -168,20 +168,20 @@ public class ChartDemo extends AbstractEntryPoint {
         update = value;
       }
     } );
-    Button button = new Button( composite, SWT.PUSH );
-    button.setText( "Draw!" );
-    button.addListener( SWT.Selection, new Listener() {
+    Button drawButton = new Button( composite, SWT.PUSH );
+    drawButton.setText( "Draw!" );
+    drawButton.addListener( SWT.Selection, new Listener() {
       @Override
       public void handleEvent( Event event ) {
         renderChart( update - 1 );
       }
     } );
-    Button button2 = new Button( composite, SWT.PUSH );
-    button2.setText( "Update!" );
-    button2.addListener( SWT.Selection, new Listener() {
+    Button clearButton = new Button( composite, SWT.PUSH );
+    clearButton.setText( "Clear!" );
+    clearButton.addListener( SWT.Selection, new Listener() {
       @Override
       public void handleEvent( Event event ) {
-        //renderChart( update );
+        charts[ update - 1 ].clear();
       }
     } );
   }

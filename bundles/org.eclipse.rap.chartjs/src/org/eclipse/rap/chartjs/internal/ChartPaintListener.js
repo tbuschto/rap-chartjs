@@ -8,22 +8,26 @@
  * Contributors:
  *    EclipseSource - initial API and implementation
  ******************************************************************************/
+//@ sourceURL=ChartPaintListener.js
 
 function handleEvent( event ) {
+  var widget = event.widget;
   if( event.gc.measureText ) { // exclude old IE
-    var widget = event.widget;
-    var type = event.widget.getData( "chartType" );
-    var data = event.widget.getData( "chartData" );
-    var options = event.widget.getData( "chartOptions" );
+    var type = widget.getData( "chartType" );
+    var data = widget.getData( "chartData" );
+    var options = widget.getData( "chartOptions" );
     var chart = widget.getData( "chart" );
     if( chart ) {
+      chart.stop();
       chart.destroy();
+      chart = null;
     }
-    event.gc.canvas.style.zIndex = 10000; // small hack to make sure chart gets the mouse events
-    event.gc.canvas.style.position = "relative";
-    chart = new Chart( event.gc )[ type ]( data, options );
+    if( type ) {
+      event.gc.canvas.style.zIndex = 10000; // small hack to make sure chart gets the mouse events
+      event.gc.canvas.style.position = "relative";
+      chart = new Chart( event.gc )[ type ]( data, options );
+      options.animation = false; // no animation on refresh
+    }
     widget.setData( "chart", chart );
-    // on later redraws we don't want to replay the appear animation:
-    options.animation = false; // will be reset by server for new charts
   }
 }
