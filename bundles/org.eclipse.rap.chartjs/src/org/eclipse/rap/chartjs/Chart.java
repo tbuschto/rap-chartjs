@@ -75,7 +75,7 @@ public class Chart extends Canvas {
 	}
 	
 	public void drawStackedBarChart(ChartStackedBarData data, ChartOptions options) {
-		drawChart(STACKED_BAR_CHART, getBarChartOptions(options), data.toJson());
+		drawChart(STACKED_BAR_CHART, getStackedBarChartOptions(options), data.toJson());
 	}
 
 	public void drawRadarChart(ChartRowData data) {
