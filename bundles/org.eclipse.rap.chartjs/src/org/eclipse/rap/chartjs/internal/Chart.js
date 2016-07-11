@@ -1184,7 +1184,14 @@
 			return (chartX >= this.x - this.width/2 && chartX <= this.x + this.width/2) && (chartY >= this.y && chartY <= this.base);
 		}
 	});
-
+	
+	//HERI : Snippet took from stack overflow for number formating
+	function numberWithSpaces(x) {
+	    var parts = x.toString().split(".");
+	    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+	    return parts.join(".");
+	}
+		
 	Chart.Tooltip = Chart.Element.extend({
 		draw : function(){
 
@@ -1198,7 +1205,12 @@
 			//Distance between the actual element.y position and the start of the tooltip caret
 			var caretPadding = 2;
 
-			var tooltipWidth = ctx.measureText(this.text).width + 2*this.xPadding,
+			//HERI : Here I convert the format the text to make it more readable for the user
+			var formatText = numberWithSpaces(this.text);
+			
+			
+			
+			var tooltipWidth = ctx.measureText(formatText).width + 2*this.xPadding,
 				tooltipRectHeight = this.fontSize + 2*this.yPadding,
 				tooltipHeight = tooltipRectHeight + this.caretHeight + caretPadding;
 
@@ -1258,7 +1270,7 @@
 			ctx.fillStyle = this.textColor;
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
-			ctx.fillText(this.text, tooltipX + tooltipWidth/2, tooltipY + tooltipRectHeight/2);
+			ctx.fillText(formatText, tooltipX + tooltipWidth/2, tooltipY + tooltipRectHeight/2);
 		}
 	});
 
@@ -1312,7 +1324,7 @@
 
 		},
 		draw : function(){
-			drawRoundedRectangle(this.ctx,this.x,this.y - this.height/2,this.width,this.height,this.cornerRadius);
+			drawRoundedRectangle(this.ctx,this.x,this.y - this.height/2,this.width+10,this.height,this.cornerRadius);
 			var ctx = this.ctx;
 			ctx.fillStyle = this.fillColor;
 			ctx.fill();
@@ -1328,7 +1340,8 @@
 			ctx.font = this.font;
 			helpers.each(this.labels,function(label,index){
 				ctx.fillStyle = this.textColor;
-				ctx.fillText(label,this.x + this.xPadding + this.fontSize + 3, this.getLineHeight(index + 1));
+				//label
+				ctx.fillText(numberWithSpaces(label),this.x + this.xPadding + this.fontSize + 3, this.getLineHeight(index + 1));
 
 				//A bit gnarly, but clearing this rectangle breaks when using explorercanvas (clears whole canvas)
 				//ctx.clearRect(this.x + this.xPadding, this.getLineHeight(index + 1) - this.fontSize/2, this.fontSize, this.fontSize);
@@ -1511,7 +1524,7 @@
 					ctx.textAlign = "right";
 					ctx.textBaseline = "middle";
 					if (this.showLabels){
-						ctx.fillText(labelString,xStart - 10,yLabelCenter);
+						ctx.fillText(numberWithSpaces(labelString),xStart-5,yLabelCenter);
 					}
 					ctx.beginPath();
 					if (index > 0){
@@ -1799,7 +1812,7 @@
 							ctx.textAlign = 'center';
 							ctx.textBaseline = "middle";
 							ctx.fillStyle = this.fontColor;
-							ctx.fillText(label, this.xCenter, yHeight);
+							ctx.fillText(numberWithSpaces(label), this.xCenter, yHeight);
 						}
 					}
 				}, this);
