@@ -25,7 +25,7 @@ function handleEvent( event ) {
     if( type ) {
       event.gc.canvas.style.zIndex = 10000; // small hack to make sure chart gets the mouse events
       event.gc.canvas.style.position = "relative";
-      chart = new Chart( event.gc )[ type ]( data, options );
+      chart = new Chart( event.gc ,{type:type, data:data, options:options});
       options.animation = false; // no animation on refresh
     }
     widget.setData( "chart", chart );
