@@ -33,23 +33,20 @@ public class LineChartRowData
         JsonObject result = new JsonObject();
         result.add("labels", asJson(labels));
         JsonArray rowsJson = new JsonArray();
+        JsonArray rowsAction = new JsonArray();
         for (int i = 0; i < rows.size(); i++)
         {
             RowInfo rowInfo = rowlabels.get(i);
-            rowsJson.add(new JsonObject().
-                    add("label", (rowInfo.label)).add("pointStyle", (rowInfo.pointStyle)).
-                    add("showLine", (rowInfo.showLine)).
-                    add("fill", rowInfo.fill).
-                    add("borderWidth", rowInfo.lineWidth).
-                    add("lineTension", rowInfo.lineTension).
-                    add("steppedLine", rowInfo.steppedLine).
-                    add("backgroundColor", asCss(rowInfo.chartStyle.getFillColor(), rowInfo.chartStyle.getFillOpacity()))
-                    .add("borderColor", asCss(rowInfo.chartStyle.getStrokeColor())).
-                    add("pointBackgroundColor", asCss(rowInfo.chartStyle.getPointColor())).
-                    add("pointBorderColor", asCss(rowInfo.chartStyle.getPointColor())).
-                    add("pointBorderWidth", rowInfo.lineWidth).add("data", asJson(rows.get(i))));
+            rowsAction.add(rowInfo.action);
+            rowsJson.add(new JsonObject().add("label", (rowInfo.label)).
+                    add("pointStyle", (rowInfo.pointStyle)).
+                    add("hidden", (rowInfo.hidden))
+                    .add("showLine", (rowInfo.showLine)).add("fill", rowInfo.fill).add("borderWidth", rowInfo.lineWidth).add("lineTension", rowInfo.lineTension).add("steppedLine", rowInfo.steppedLine)
+                    .add("backgroundColor", asCss(rowInfo.chartStyle.getFillColor(), rowInfo.chartStyle.getFillOpacity())).add("borderColor", asCss(rowInfo.chartStyle.getStrokeColor())).add("pointBackgroundColor", asCss(rowInfo.chartStyle.getPointColor()))
+                    .add("pointBorderColor", asCss(rowInfo.chartStyle.getPointColor())).add("pointBorderWidth", rowInfo.lineWidth).add("data", asJson(rows.get(i))));
         }
         result.add("datasets", rowsJson);
+        result.add("actions", rowsAction);
         return result;
     }
 
@@ -77,37 +74,60 @@ public class LineChartRowData
     {
 
         String     label;
-        String     pointStyle = "circle";
+        String     pointStyle  = "circle";
         boolean    fill;
-        boolean    showLine   = true;
+        boolean    hidden = true;
+        boolean    showLine    = true;
         ChartStyle chartStyle;
-        int        lineWidth  = 1;
-        double     lineTension  = 0.4;
-        String     steppedLine  = "false";
+        int        lineWidth   = 1;
+        double     lineTension = 0.4;
+        String     steppedLine = "false";
+        String     action = "select";
 
         public String getLabel()
         {
             return label;
         }
 
+        public boolean isHidden()
+        {
+            return hidden;
+        }
+
+        public void setHidden(boolean hidden)
+        {
+            this.hidden = hidden;
+        }
+
         public void setLabel(String label)
         {
             this.label = label;
         }
-        
+
         public String getSteppedLine()
         {
             return steppedLine;
         }
+        
+        public void setAction(String action)
+        {
+            this.action = action;
+        }
+        
+        public String getAction()
+        {
+            return action;
+        }
+
         public void setSteppedLine(String steppedLine)
         {
-            if("before".equals(steppedLine)||"after".equals(steppedLine) )
+            if ("before".equals(steppedLine) || "after".equals(steppedLine))
             {
                 this.steppedLine = steppedLine;
             }
             else
                 this.steppedLine = null;
-            
+
         }
 
         public boolean isFill()
@@ -149,20 +169,22 @@ public class LineChartRowData
         {
             return pointStyle;
         }
-        
+
         public void setShowLine(boolean showLine)
         {
             this.showLine = showLine;
         }
+
         public boolean isShowLine()
         {
             return showLine;
         }
-        
+
         public double getLineTension()
         {
             return lineTension;
         }
+
         public void setLineTension(double lineTension)
         {
             this.lineTension = lineTension;

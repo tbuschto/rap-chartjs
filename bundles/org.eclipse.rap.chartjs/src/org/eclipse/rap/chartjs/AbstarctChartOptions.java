@@ -17,6 +17,8 @@ public class AbstarctChartOptions
     private boolean animation    = true;
     private boolean showToolTips = true;
 
+    private Legend  legend       = new Legend();
+
     /**
      * Sets whether to play an "appear" animation for a new chart drawing.
      * 
@@ -32,6 +34,11 @@ public class AbstarctChartOptions
     public boolean getAnimation()
     {
         return this.animation;
+    }
+
+    public Legend getLegend()
+    {
+        return legend;
     }
 
     /**
@@ -56,7 +63,7 @@ public class AbstarctChartOptions
         JsonObject result = new JsonObject();
         result.add("animation", new Animation(animation).toJson());
         // result.add( "animation", animation );
-        result.add("legend", true);
+        result.add("legend", legend.toJson());
 
         Tooltips tooltips = new Tooltips();
         tooltips.enabled = showToolTips;
@@ -103,6 +110,50 @@ public class AbstarctChartOptions
             result.add("enabled", enabled);
 
             return result;
+        }
+
+    }
+
+    public static class Legend
+    {
+        boolean enabled  = true;
+        String  position = "bottom";
+
+        public Legend()
+        {
+
+        }
+
+        JsonObject toJson()
+        {
+            JsonObject result = new JsonObject();
+            result.add("display", enabled);
+            if (enabled)
+            {
+                result.add("position", position);
+            }
+
+            return result;
+        }
+
+        public void setEnabled(boolean enabled)
+        {
+            this.enabled = enabled;
+        }
+
+        public boolean isEnabled()
+        {
+            return enabled;
+        }
+
+        public void setPosition(String position)
+        {
+            this.position = position;
+        }
+
+        public String getPosition()
+        {
+            return position;
         }
 
     }

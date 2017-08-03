@@ -18,11 +18,16 @@ import org.eclipse.rap.json.JsonValue;
 import org.eclipse.rap.rwt.RWT;
 import org.eclipse.rap.rwt.client.service.JavaScriptLoader;
 import org.eclipse.rap.rwt.internal.lifecycle.WidgetUtil;
+import org.eclipse.rap.rwt.remote.AbstractOperationHandler;
+import org.eclipse.rap.rwt.remote.Connection;
+import org.eclipse.rap.rwt.remote.OperationHandler;
+import org.eclipse.rap.rwt.remote.RemoteObject;
 import org.eclipse.rap.rwt.scripting.ClientListener;
 import org.eclipse.rap.rwt.service.ResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 @SuppressWarnings("deprecation")
 public abstract class AbstractChart extends Canvas
@@ -30,9 +35,38 @@ public abstract class AbstractChart extends Canvas
 
     private static final String CHART_OPTIONS = "chartOptions";
     private static final String CHART_DATA    = "chartData";
-    private static final String CHART_MIN_JS  = "Chart.js";
+    private static final String CHART_MIN_JS  = "Chart.min.js";
+    private static final String CHARTPAINT_HANDLER_JS  = "ChartHandler.js";
+  //  private static final String CHARTPAINT_LISTENER_JS  = "ChartPaintListener.js";
     private static final String CHART_TYPE    = "chartType";
+    private static final String REMOTE_TYPE = "chartjs.AbstractChart";
+    private RemoteObject remoteObject;
+    private final OperationHandler operationHandler = new AbstractOperationHandler()
+    {
+        private static final long serialVersionUID = 1L;
 
+        public void handleSet(JsonObject properties)
+        {
+            
+        }
+        @Override
+        public void handleCall(final String method, final JsonObject parameters)
+        {
+            Display.getCurrent().asyncExec(new Runnable()
+            {
+
+                @Override
+                public void run()
+                {
+                    
+                    action(method, parameters);
+
+                }
+
+                
+            });
+        }
+    };
     public AbstractChart(Composite parent, int style)
     {
         super(parent, style);
@@ -41,9 +75,14 @@ public abstract class AbstractChart extends Canvas
         // NOTE: RAP re-transfers all attached widget data, even if only one of
         // them changes,
         // but JsonObject/JsonArray aren't deep-compared
-        WidgetUtil.registerDataKeys(CHART_TYPE, CHART_DATA, CHART_OPTIONS);
-        addPaintListener();
-        applyFixes();
+      //  WidgetUtil.registerDataKeys(CHART_TYPE, CHART_DATA, CHART_OPTIONS);
+       // addPaintListener();
+        //applyFixes();
+        Connection connection = RWT.getUISession().getConnection();
+        remoteObject = connection.createRemoteObject(REMOTE_TYPE);
+
+        remoteObject.set("parent", WidgetUtil.getId(this));
+        remoteObject.setHandler(operationHandler);
     }
 
     public void clear()
@@ -54,12 +93,25 @@ public abstract class AbstractChart extends Canvas
 
     protected void drawChart(String type, JsonObject options, JsonValue data)
     {
-        setData(CHART_TYPE, type);
-        setData(CHART_OPTIONS, options);
-        setData(CHART_DATA, data);
-        redraw();
+//        setData(CHART_TYPE, type);
+//        setData(CHART_OPTIONS, options);
+//        setData(CHART_DATA, data);
+        
+        JsonObject object = new JsonObject();
+        
+        object.set("type", type);
+        object.set("options", options);
+        object.set("data", data);
+        remoteObject.set("context", object);
     }
 
+    
+    protected void action(String method, JsonObject parameters)
+    {
+        System.out.println(method+"-"+parameters.toString());
+        
+    }
+    
     private void addPaintListener()
     {
         addListener(SWT.Paint, ChartPaintListener.getInstance());
@@ -76,6 +128,7 @@ public abstract class AbstractChart extends Canvas
     {
         JavaScriptLoader service = RWT.getClient().getService(JavaScriptLoader.class);
         service.require(RWT.getResourceManager().getLocation(CHART_MIN_JS));
+        service.require(RWT.getResourceManager().getLocation(CHARTPAINT_HANDLER_JS));
     }
 
     public static void registerJS()
@@ -93,6 +146,17 @@ public abstract class AbstractChart extends Canvas
             {
                 throw new RuntimeException(e);
             }
+             inputStream = ChartPaintListener.class.getResourceAsStream(CHARTPAINT_HANDLER_JS);
+            manager.register(CHARTPAINT_HANDLER_JS, inputStream);
+            try
+            {
+                inputStream.close();
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+           
 
         }
     }
