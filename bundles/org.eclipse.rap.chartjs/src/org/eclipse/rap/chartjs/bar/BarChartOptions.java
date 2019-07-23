@@ -15,8 +15,11 @@ public class BarChartOptions extends AbstarctChartOptions
     float      categoryPercentage = 0.8f;
     Integer    barThickness;
     Integer    maxBarThickness;
+    
+    GridLines gridLines = new GridLines();
 
     List<Axis> yAxes              = new ArrayList<Axis>();
+    List<Axis> xAxes              = new ArrayList<Axis>();
 
     public BarChartOptions()
     {
@@ -26,6 +29,16 @@ public class BarChartOptions extends AbstarctChartOptions
     public List<Axis> getYAxes()
     {
         return yAxes;
+    }
+    
+    public GridLines getGridLines()
+    {
+        return gridLines;
+    }
+    
+    public List<Axis> getxAxes()
+    {
+        return xAxes;
     }
 
     public float getBarPercentage()
@@ -72,19 +85,89 @@ public class BarChartOptions extends AbstarctChartOptions
     public JsonObject toJson()
     {
         JsonObject jsonObject = super.toJson();
-        JsonArray jsonArray = new JsonArray();
-        if (barThickness != null)
-            jsonObject.add("barThickness", barThickness);
-        if (maxBarThickness != null)
-            jsonObject.add("maxBarThickness", maxBarThickness);
-        jsonObject.add("categoryPercentage", categoryPercentage);
-        jsonObject.add("barPercentage", barPercentage);
-        jsonObject.add("scales", new JsonObject().add("yAxes", jsonArray));
+        JsonArray yjsonArray = new JsonArray();
+        JsonArray xjsonArray = new JsonArray();
+        
+        JsonObject axis = new JsonObject();
+        
+        axis.add("yAxes", yjsonArray);
+       
+        axis.add("xAxes", xjsonArray);
+        
+        jsonObject.add("scales", axis);
         for (Axis yaxis : yAxes)
         {
-            jsonArray.add(new JsonObject().add("ticks", yaxis.getTicks().toJson()));
+            JsonObject object = new JsonObject();
+            object.add("gridLines", gridLines.toJson());
+            object.add("display", yaxis.isDisplay());
+            yjsonArray.add(object.add("ticks", yaxis.getTicks().toJson()));
+        }
+        
+        for (Axis yaxis : xAxes)
+        {
+            JsonObject object = new JsonObject();
+            object.add("gridLines", gridLines.toJson());
+            object.add("display", yaxis.isDisplay());
+            xjsonArray.add(object.add("ticks", yaxis.getTicks().toJson()));
+        }
+        
+        if(xAxes.isEmpty())
+        {
+            JsonObject axisObj = new JsonObject();
+            if (barThickness != null)
+                axisObj.add("barThickness", barThickness);
+            if (maxBarThickness != null)
+                axisObj.add("maxBarThickness", maxBarThickness);
+            axisObj.add("categoryPercentage", categoryPercentage);
+            axisObj.add("barPercentage", barPercentage);
+            xjsonArray.add(axisObj);
+        }
+        if(yAxes.isEmpty())
+        {
+            JsonObject axisObj = new JsonObject();
+            if (barThickness != null)
+                axisObj.add("barThickness", barThickness);
+            if (maxBarThickness != null)
+                axisObj.add("maxBarThickness", maxBarThickness);
+            axisObj.add("categoryPercentage", categoryPercentage);
+            axisObj.add("barPercentage", barPercentage);
+            yjsonArray.add(axisObj);
         }
 
         return jsonObject;
+    }
+    
+    public static class GridLines{
+        boolean  display = true;
+        boolean  drawBorder = false;
+        
+        public void setDisplay(boolean display)
+        {
+            this.display = display;
+        }
+        public boolean isDisplay()
+        {
+            return display;
+        }
+        
+        public void setDrawBorder(boolean drawBorder)
+        {
+            this.drawBorder = drawBorder;
+        }
+        
+        public boolean isDrawBorder()
+        {
+            return drawBorder;
+        }
+        
+        public JsonObject toJson()
+        {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.add("display", display);
+            jsonObject.add("drawBorder", drawBorder);
+            
+            return jsonObject;
+        }
+        
     }
 }

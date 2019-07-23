@@ -156,7 +156,8 @@
 	    		    {
 			    		  var remoteObject = rap.getRemoteObject(this);
 			    		  var dataset = activeElement[0]._chart.data.datasets[activeElement[0]._datasetIndex];
-				          var args = {label:dataset.label, value:dataset.data[activeElement[0]._index]};
+			    		  
+				          var args = {data_label: dataset.label,label: activeElement[0]._chart.data.labels[activeElement[0]._index],value: dataset.data[activeElement[0]._index]};
 				        
 				        	
 				        	  remoteObject.call(action,args);

@@ -9,6 +9,7 @@ import org.eclipse.rap.chartjs.ChartStyle;
 import org.eclipse.rap.chartjs.line.LineChartRowData.RowInfo;
 import org.eclipse.rap.json.JsonArray;
 import org.eclipse.rap.json.JsonObject;
+import org.eclipse.rap.json.JsonValue;
 
 public class BarChartRowData
 {
@@ -16,6 +17,7 @@ public class BarChartRowData
     private final String[]      labels;
     private final List<RowInfo> rowlabels = new ArrayList<RowInfo>(1);
     private final List<float[]> rows      = new ArrayList<float[]>(1);
+    private final List<ChartStyle[]> rowStyles     = new ArrayList<ChartStyle[]>(1);
 
     public BarChartRowData(String[] labels)
     {
@@ -24,8 +26,15 @@ public class BarChartRowData
 
     public BarChartRowData addRow(RowInfo rowInfo, float[] row)
     {
+       return this.addRow(rowInfo, row, null);
+    }
+    public BarChartRowData addRow(RowInfo rowInfo, float[] row,ChartStyle[] styles)
+    {
         rowlabels.add(rowInfo);
         rows.add(row);
+        if(styles==null)
+            styles = new ChartStyle[0];
+        rowStyles.add(styles);
         return this;
     }
 
@@ -39,12 +48,36 @@ public class BarChartRowData
         {
             RowInfo rowInfo = rowlabels.get(i);
             rowsAction.add(rowInfo.action);
+            
+            ChartStyle[] styles=  rowStyles.get(i);
+            JsonValue bg;
+            JsonValue bc  ;
+            JsonValue pc ;
+            if(styles.length>0)
+            {
+                bg =  new JsonArray();
+                bc =  new JsonArray();
+                pc =  new JsonArray();
+                for (ChartStyle chartStyle : styles)
+                {
+                    ((JsonArray)bg).add(asCss(chartStyle.getFillColor(), chartStyle.getFillOpacity()));
+                    ((JsonArray)bc).add(asCss(chartStyle.getStrokeColor()));
+                    ((JsonArray)pc).add(asCss(chartStyle.getPointColor()));
+                }
+            }
+            else
+            {
+                 bg = JsonValue.valueOf(asCss(rowInfo.chartStyle.getFillColor(), rowInfo.chartStyle.getFillOpacity()));
+                 bc = JsonValue.valueOf(asCss(rowInfo.chartStyle.getStrokeColor()));
+                 pc = JsonValue.valueOf(asCss(rowInfo.chartStyle.getPointColor()));
+            }
+            
             rowsJson.add(new JsonObject().add("label", (rowInfo.label)).
                   
                     add("hidden", (rowInfo.hidden))
-                    .add("backgroundColor", asCss(rowInfo.chartStyle.getFillColor(), rowInfo.chartStyle.getFillOpacity())).
-                    add("borderColor", asCss(rowInfo.chartStyle.getStrokeColor()))
-                    .add("pointBorderColor", asCss(rowInfo.chartStyle.getPointColor()))
+                    .add("backgroundColor", bg).
+                    add("borderColor", bc)
+                    .add("pointBorderColor", pc)
                     .add("data", asJson(rows.get(i))));
         }
         result.add("datasets", rowsJson);

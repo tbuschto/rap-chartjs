@@ -5,6 +5,7 @@ import org.eclipse.rap.json.JsonObject;
 public class Ticks
 {
     private Boolean beginAtZero;
+    private boolean display = true;
     private Double  min;
     private Double  max;
     private Double  stepSize      ;
@@ -16,6 +17,16 @@ public class Ticks
     public Boolean getBeginAtZero()
     {
         return beginAtZero;
+    }
+    
+    public void setDisplay(boolean display)
+    {
+        this.display = display;
+    }
+    
+    public boolean isDisplay()
+    {
+        return display;
     }
 
     public void setBeginAtZero(Boolean beginAtZero)
@@ -100,6 +111,7 @@ public class Ticks
             result.add("suggestedMax", suggestedMax);
         if (suggestedMin != null)
             result.add("suggestedMin", suggestedMin);
+        result.add("display", display);
         return result;
     }
 
