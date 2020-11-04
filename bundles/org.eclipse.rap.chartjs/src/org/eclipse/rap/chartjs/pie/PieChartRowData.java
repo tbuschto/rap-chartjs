@@ -17,6 +17,8 @@ public class PieChartRowData
     private final List<RowInfo>  rowlabels = new ArrayList<RowInfo>(1);
     private final List<double[]> rows      = new ArrayList<double[]>(1);
 
+    private final List<String[]> rowsToolTips      = new ArrayList<String[]>(1);
+
     public PieChartRowData(String[] labels)
     {
         this.labels = labels;
@@ -24,9 +26,26 @@ public class PieChartRowData
 
     public PieChartRowData addRow(RowInfo rowInfo, double[] row)
     {
+        this.addRow(rowInfo, row, toStringArray(row));
+        return this;
+    }
+    public PieChartRowData addRow(RowInfo rowInfo, double[] row,String[] tootips)
+    {
         rowlabels.add(rowInfo);
         rows.add(row);
+        rowsToolTips.add(tootips);
         return this;
+    }
+    
+    private String[] toStringArray(double[] row)
+    {
+        String[] str = new String[row.length];
+        for (int i = 0; i < str.length; i++)
+        {
+            str[i] = String.valueOf(row[i]);
+            
+        }
+        return str;
     }
 
     JsonObject toJson()
@@ -50,6 +69,7 @@ public class PieChartRowData
                 jsonObject.add("borderColor", asJsonFG(rowInfo.chartStyle));
             }
             jsonObject.add("data", asJson(rowInfo, rows.get(i)));
+            jsonObject.add("dataTooltips", asJson( rowsToolTips.get(i)));
             rowsJson.add(jsonObject.add("label", (rowInfo.label)));
         }
         result.add("datasets", rowsJson);

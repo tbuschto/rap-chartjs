@@ -17,6 +17,8 @@ public class BarChartRowData
     private final String[]      labels;
     private final List<RowInfo> rowlabels = new ArrayList<RowInfo>(1);
     private final List<float[]> rows      = new ArrayList<float[]>(1);
+
+    private final List<String[]> rowsToolTips      = new ArrayList<String[]>(1);
     private final List<ChartStyle[]> rowStyles     = new ArrayList<ChartStyle[]>(1);
 
     public BarChartRowData(String[] labels)
@@ -26,16 +28,37 @@ public class BarChartRowData
 
     public BarChartRowData addRow(RowInfo rowInfo, float[] row)
     {
-       return this.addRow(rowInfo, row, null);
+       return this.addRow(rowInfo, row,toStringArray(row), null);
     }
     public BarChartRowData addRow(RowInfo rowInfo, float[] row,ChartStyle[] styles)
     {
+        this.addRow(rowInfo, row,toStringArray(row), styles);
+        return this;
+    }
+    public BarChartRowData addRow(RowInfo rowInfo, float[] row, String[] tootips)
+    {
+        return this.addRow(rowInfo, row,tootips, null);
+    }
+    public BarChartRowData addRow(RowInfo rowInfo, float[] row, String[] tootips,ChartStyle[] styles)
+    {
         rowlabels.add(rowInfo);
         rows.add(row);
+        rowsToolTips.add(tootips);
         if(styles==null)
             styles = new ChartStyle[0];
         rowStyles.add(styles);
         return this;
+    }
+    
+    private String[] toStringArray(float[] row)
+    {
+        String[] str = new String[row.length];
+        for (int i = 0; i < str.length; i++)
+        {
+            str[i] = String.valueOf(row[i]);
+            
+        }
+        return str;
     }
 
     JsonObject toJson()
@@ -78,7 +101,9 @@ public class BarChartRowData
                     .add("backgroundColor", bg).
                     add("borderColor", bc)
                     .add("pointBorderColor", pc)
-                    .add("data", asJson(rows.get(i))));
+                    .add("data", asJson(rows.get(i)))
+                    .add("dataTooltips", asJson(rowsToolTips.get(i)))
+                    );
         }
         result.add("datasets", rowsJson);
 

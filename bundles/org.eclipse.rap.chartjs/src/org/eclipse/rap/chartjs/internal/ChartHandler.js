@@ -19,7 +19,7 @@
 	}
 
 	chartjs.AbstractChart = function(properties) {
-		bindAll(this, [ "layout", "onReady", "onSend", "onRender","chart_action" ]);
+		bindAll(this, [ "layout", "onReady", "onSend", "onRender","chart_action","chart_tooltip" ]);
 		this.parent = rap.getObject(properties.parent);
 		
 		this.element = document.createElement("canvas");
@@ -78,6 +78,7 @@
 			if(this.context&&  this.context.options)
 			{
 				this.context.options.onClick = this.chart_action;
+				this.context.options.tooltips.callbacks.label = this.chart_tooltip;
 			}
 			if (this.ready) {
 				
@@ -165,6 +166,15 @@
 			     }
 			 }
 	        
+	        
+	        
+	    },
+	    chart_tooltip : function(tooltipItem, data) {
+	    	
+			if(data.datasets[tooltipItem.datasetIndex].dataTooltips) 
+				return data.datasets[tooltipItem.datasetIndex].dataTooltips[tooltipItem.index];
+	    	
+	    	return data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
 	        
 	        
 	    },

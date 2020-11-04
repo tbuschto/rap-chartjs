@@ -3,7 +3,9 @@ package org.eclipse.rap.chartjs.line;
 import static org.eclipse.rap.chartjs.ChartStyle.asCss;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.rap.chartjs.ChartStyle;
 import org.eclipse.rap.chartjs.bar.BarChartRowData;
@@ -18,6 +20,7 @@ public class LineChartRowData
     private final String[]      labels;
     private final List<RowInfo> rowlabels = new ArrayList<RowInfo>(1);
     private final List<float[]> rows      = new ArrayList<float[]>(1);
+    private final List<String[]> rowsToolTips      = new ArrayList<String[]>(1);
     private final List<ChartStyle[]> rowStyles     = new ArrayList<ChartStyle[]>(1);
 
 
@@ -26,20 +29,43 @@ public class LineChartRowData
         this.labels = labels;
     }
 
-    public LineChartRowData addRow(RowInfo rowInfo, float[] row)
+    public LineChartRowData addRow(RowInfo rowInfo, float[] row, String[] tootips)
     {
        
-        return this.addRow(rowInfo, row, null);
+        return this.addRow(rowInfo, row, tootips,null);
     }
     
-    public LineChartRowData addRow(RowInfo rowInfo, float[] row,ChartStyle[] styles)
+    public LineChartRowData addRow(RowInfo rowInfo, float[] row, String[] tootips, ChartStyle[] styles)
     {
         rowlabels.add(rowInfo);
         rows.add(row);
+        rowsToolTips.add(tootips);
         if(styles==null)
             styles = new ChartStyle[0];
         rowStyles.add(styles);
         return this;
+    }
+    
+    public LineChartRowData addRow(RowInfo rowInfo, float[] row)
+    {
+        
+        return this.addRow(rowInfo, row, toStringArray(row),null);
+    }
+    
+    private String[] toStringArray(float[] row)
+    {
+        String[] str = new String[row.length];
+        for (int i = 0; i < str.length; i++)
+        {
+            str[i] = String.valueOf(row[i]);
+            
+        }
+        return str;
+    }
+
+    public LineChartRowData addRow(RowInfo rowInfo, float[] row,ChartStyle[] styles)
+    {
+        return this.addRow(rowInfo, row, toStringArray(row),styles);
     }
 
     JsonObject toJson()
@@ -83,7 +109,7 @@ public class LineChartRowData
                     add("hidden", (rowInfo.hidden))
                     .add("showLine", (rowInfo.showLine)).add("fill", rowInfo.fill).add("borderWidth", rowInfo.lineWidth).add("lineTension", rowInfo.lineTension).add("steppedLine", rowInfo.steppedLine)
                     .add("backgroundColor", bg).add("borderColor", pc).add("pointBackgroundColor", pc)
-                    .add("pointBorderColor", pc).add("pointBorderWidth", rowInfo.lineWidth).add("data", asJson(rows.get(i))));
+                    .add("pointBorderColor", pc).add("pointBorderWidth", rowInfo.lineWidth).add("data", asJson(rows.get(i))).add("dataTooltips", asJson(rowsToolTips.get(i))));
         }
         result.add("datasets", rowsJson);
         result.add("actions", rowsAction);
