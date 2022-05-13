@@ -108,7 +108,7 @@ public class LineChartRowData
                     add("pointStyle", (rowInfo.pointStyle)).
                     add("hidden", (rowInfo.hidden))
                     .add("showLine", (rowInfo.showLine)).add("fill", rowInfo.fill).add("borderWidth", rowInfo.lineWidth).add("lineTension", rowInfo.lineTension).add("steppedLine", rowInfo.steppedLine)
-                    .add("backgroundColor", bg).add("borderColor", pc).add("pointBackgroundColor", pc)
+                    .add("backgroundColor", bg).add("borderColor", bg).add("pointBackgroundColor", pc)
                     .add("pointBorderColor", pc).add("pointBorderWidth", rowInfo.lineWidth).add("data", asJson(rows.get(i))).add("dataTooltips", asJson(rowsToolTips.get(i))));
         }
         result.add("datasets", rowsJson);
