@@ -19,7 +19,7 @@
 	}
 
 	chartjs.AbstractChart = function(properties) {
-		bindAll(this, [ "layout", "onReady", "onSend", "onRender","chart_action","chart_tooltip" ]);
+		bindAll(this, [ "layout", "onReady", "onSend", "onRender","chart_action","chart_tooltip","chart_legend_action" ]);
 		this.parent = rap.getObject(properties.parent);
 		
 		this.element = document.createElement("canvas");
@@ -33,7 +33,7 @@
 		this.context = properties.context;
 		this.chart =  null;
 
-	
+		this.defaultLegendClickHandle = null;
 		
 		
 
@@ -78,6 +78,8 @@
 			if(this.context&&  this.context.options)
 			{
 				this.context.options.onClick = this.chart_action;
+				this.defaultLegendClickHandler = Chart.defaults.global.legend.onClick;
+				this.context.options.legend.onClick = this.chart_legend_action;
 				this.context.options.tooltips.callbacks.label = this.chart_tooltip;
 				
 				
@@ -186,6 +188,19 @@
 	        
 	        
 	        
+	    },
+	    
+	    chart_legend_action : function(e, legendItem) {
+	        
+	    	
+	    	// Do the original logic
+	        this.defaultLegendClickHandler(e, legendItem);
+	        
+	        var remoteObject = rap.getRemoteObject(this);
+	        var args = {index: legendItem.datasetIndex,label:legendItem.text};
+      	    remoteObject.call('legend_action',args);
+	    	
+	    	
 	    },
 	    chart_tooltip : function(tooltipItem, data) {
 	    	
