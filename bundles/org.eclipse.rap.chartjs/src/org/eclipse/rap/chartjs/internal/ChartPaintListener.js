@@ -15,6 +15,7 @@ function handleEvent( event ) {
   if( event.gc.measureText ) { // exclude old IE
     var type = widget.getData( "chartType" );
     var data = widget.getData( "chartData" );
+    var id = widget.getData( "chartId" );
     var options = widget.getData( "chartOptions" );
     var chart = widget.getData( "chart" );
     if( chart ) {
@@ -25,9 +26,22 @@ function handleEvent( event ) {
     if( type ) {
       event.gc.canvas.style.zIndex = 10000; // small hack to make sure chart gets the mouse events
       event.gc.canvas.style.position = "relative";
-      chart = new Chart( event.gc )[ type ]( data, options );
+      event.gc.canvas.height = widget.getClientArea().height;
+      event.gc.canvas.width = widget.getClientArea().width;
+      var handleClick =  function( evt)
+      {
+    	  var activeElement = chart.getElementAtEvent(evt);
+    	  if(activeElement!=null && activeElement[0]!=null && activeElement[0]._model!=null)
+		  {
+    		  var action = activeElement[0]._model.actionId;
+		  }
+      }
+      options.onClick = handleClick;
+      chart = new Chart( event.gc ,{type:type, data:data, options:options});
       options.animation = false; // no animation on refresh
     }
     widget.setData( "chart", chart );
   }
 }
+
+
